@@ -13,9 +13,10 @@ const Button = (props) => {
 
 const StatisticsLine = (props) => {
   return (
-    <p>
-      {props.text} {props.value}
-    </p>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   );
 };
 
@@ -24,7 +25,7 @@ const Statistics = (props) => {
     return <p>No feedback given</p>;
   }
   return (
-    <div>
+    <table>
       <StatisticsLine text="good" value={props.good} />
       <StatisticsLine text="neutral" value={props.neutral} />
       <StatisticsLine text="bad" value={props.bad} />
@@ -44,7 +45,7 @@ const Statistics = (props) => {
           (props.good * 100) / (props.good + props.neutral + props.bad) + " %"
         }
       />
-    </div>
+    </table>
   );
 };
 
