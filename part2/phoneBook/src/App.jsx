@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Names from "./components/Names";
 
 const Filter = ({ searchPerson, handleSearchPerson }) => {
@@ -44,12 +45,27 @@ const Persons = ({ filteredPerson }) => {
   );
 };
 
-const App = (props) => {
-  const [persons, setPersons] = useState(props.persons);
+const App = () => {
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchPerson, setSearchPerson] = useState("");
-  const [filteredPerson, setFilteredPerson] = useState(props.persons);
+  const [filteredPerson, setFilteredPerson] = useState([]);
+
+  const hook = () => {
+    console.log("effect");
+    axios
+      .get("http://localhost:3001/persons")
+      .then((response) => {
+        console.log("promise fulfilled");
+        setPersons(response.data);
+        setFilteredPerson(response.data);
+      })
+      .catch((error) => {
+        console.error("error fetching data:", error);
+      });
+  };
+  useEffect(hook, []);
 
   const addName = (event) => {
     event.preventDefault();
