@@ -71,24 +71,52 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
-    const nameExist = persons.some((person) => person.name === newName);
-    if (nameExist) {
-      alert(`${newName} is already added to phonebook`);
-      setNewName("");
-      return;
-    }
+    const nameExist = persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
 
     const nameObject = {
       name: newName,
       number: newNumber,
     };
 
-    nameService.create(nameObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setFilteredPerson(filteredPerson.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
+    if (nameExist) {
+      const confirmed = window.confirm(
+        `${nameExist.name} is already added to phonebook`
+      );
+      if (!confirmed) {
+        // if user doesn't confirm the entry to be true, do nothing
+        return;
+      }
+      //update logic
+      nameService
+        .update(nameExist.id, nameObject)
+        .then((updatedPerson) => {
+          setPersons((prevPerson) => {
+            prevPerson.id === nameExist.id ? updatedPerson : persons;
+          });
+          setFilteredPerson((prevFilteredPerson) => {
+            prevFilteredPerson.id === nameExist.id ? updatedPerson : persons;
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating the number:", error.message);
+          alert("Error updating the number");
+        });
+    } else {
+      nameService
+        .create(nameObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setFilteredPerson(filteredPerson.concat(returnedPerson));
+        })
+        .catch((error) => {
+          console.error("Error updating the number:", error.message);
+          alert("Error updating the number");
+        });
+    }
+    setNewName("");
+    setNewNumber("");
   };
 
   const deleteName = (id, name) => {
