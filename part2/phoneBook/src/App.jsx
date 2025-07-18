@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Names from "./components/Names";
+import name from "./service/name";
 
 const Filter = ({ searchPerson, handleSearchPerson }) => {
   return (
@@ -54,12 +54,12 @@ const App = () => {
 
   const hook = () => {
     console.log("effect");
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
+    name
+      .getAll()
+      .then((initialPerson) => {
         console.log("promise fulfilled");
-        setPersons(response.data);
-        setFilteredPerson(response.data);
+        setPersons(initialPerson);
+        setFilteredPerson(initialPerson);
       })
       .catch((error) => {
         console.error("error fetching data:", error);
@@ -77,14 +77,13 @@ const App = () => {
     }
 
     const nameObject = {
-      id: persons.length + 1,
       name: newName,
       number: newNumber,
     };
 
-    axios.post("http://localhost:3001/persons", nameObject).then((response) => {
-      setPersons(persons.concat(response.data));
-      setFilteredPerson(filteredPerson.concat(response.data));
+    name.create(nameObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+      setFilteredPerson(filteredPerson.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
     });
