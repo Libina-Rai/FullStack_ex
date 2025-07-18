@@ -69,8 +69,6 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
-    console.log(event.target);
-
     const nameExist = persons.some((person) => person.name === newName);
     if (nameExist) {
       alert(`${newName} is already added to phonebook`);
@@ -83,21 +81,21 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(nameObject));
-    setFilteredPerson(filteredPerson.concat(nameObject));
-    setNewName("");
-    setNewNumber("");
+
+    axios.post("http://localhost:3001/persons", nameObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setFilteredPerson(filteredPerson.concat(response.data));
+      setNewName("");
+      setNewNumber("");
+    });
   };
   const handleNameChange = (event) => {
-    console.log(event.target.value);
     setNewName(event.target.value);
   };
   const handleNumberChange = (event) => {
-    console.log(event.target.value);
     setNewNumber(event.target.value);
   };
   const handleSearchPerson = (event) => {
-    console.log(event.target.value);
     setSearchPerson(event.target.value);
     const filterItems = persons.filter((person) =>
       person.name.toLowerCase().includes(event.target.value.toLowerCase())
