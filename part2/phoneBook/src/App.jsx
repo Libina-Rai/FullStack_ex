@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Names from "./components/Names";
+import nameService from "./service/name";
 
 const Filter = ({ searchPerson, handleSearchPerson }) => {
   return (
@@ -35,11 +35,13 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPerson }) => {
+const Persons = ({ filteredPerson, deleteName }) => {
   return (
     <div>
       {filteredPerson.map((person) => {
-        return <Names key={person.id} person={person} />;
+        return (
+          <Names key={person.id} person={person} deleteName={deleteName} />
+        );
       })}
     </div>
   );
@@ -54,12 +56,12 @@ const App = () => {
 
   const hook = () => {
     console.log("effect");
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
+    nameService
+      .getAll()
+      .then((initialPerson) => {
         console.log("promise fulfilled");
-        setPersons(response.data);
-        setFilteredPerson(response.data);
+        setPersons(initialPerson);
+        setFilteredPerson(initialPerson);
       })
       .catch((error) => {
         console.error("error fetching data:", error);
@@ -69,35 +71,78 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
-    console.log(event.target);
-
-    const nameExist = persons.some((person) => person.name === newName);
-    if (nameExist) {
-      alert(`${newName} is already added to phonebook`);
-      setNewName("");
-      return;
-    }
+    const nameExist = persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
 
     const nameObject = {
-      id: persons.length + 1,
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(nameObject));
-    setFilteredPerson(filteredPerson.concat(nameObject));
+
+    if (nameExist) {
+      const confirmed = window.confirm(
+        `${nameExist.name} is already added to phonebook`
+      );
+      if (!confirmed) {
+        // if user doesn't confirm the entry to be true, do nothing
+        return;
+      }
+      //update logic
+      nameService
+        .update(nameExist.id, nameObject)
+        .then((updatedPerson) => {
+          setPersons((prevPerson) => {
+            prevPerson.id === nameExist.id ? updatedPerson : persons;
+          });
+          setFilteredPerson((prevFilteredPerson) => {
+            prevFilteredPerson.id === nameExist.id ? updatedPerson : persons;
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating the number:", error.message);
+          alert("Error updating the number");
+        });
+    } else {
+      nameService
+        .create(nameObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setFilteredPerson(filteredPerson.concat(returnedPerson));
+        })
+        .catch((error) => {
+          console.error("Error updating the number:", error.message);
+          alert("Error updating the number");
+        });
+    }
     setNewName("");
     setNewNumber("");
   };
+
+  const deleteName = (id, name) => {
+    const confirmDelete = window.confirm(`Delete ${name} ?`);
+    if (!confirmDelete) {
+      return;
+    }
+    nameService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+        setFilteredPerson(filteredPerson.filter((person) => person.id !== id));
+      })
+      .catch((error) => {
+        console.log("error deleting person:", error.message);
+        alert("Error deleting person");
+      });
+  };
+
   const handleNameChange = (event) => {
-    console.log(event.target.value);
     setNewName(event.target.value);
   };
   const handleNumberChange = (event) => {
-    console.log(event.target.value);
     setNewNumber(event.target.value);
   };
   const handleSearchPerson = (event) => {
-    console.log(event.target.value);
     setSearchPerson(event.target.value);
     const filterItems = persons.filter((person) =>
       person.name.toLowerCase().includes(event.target.value.toLowerCase())
@@ -121,7 +166,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons filteredPerson={filteredPerson} />
+      <Persons filteredPerson={filteredPerson} deleteName={deleteName} />
     </div>
   );
 };
