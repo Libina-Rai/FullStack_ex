@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Names from "./components/Names";
 import nameService from "./service/name";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const Filter = ({ searchPerson, handleSearchPerson }) => {
   return (
@@ -53,6 +55,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchPerson, setSearchPerson] = useState("");
   const [filteredPerson, setFilteredPerson] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const hook = () => {
     console.log("effect");
@@ -109,6 +112,10 @@ const App = () => {
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
           setFilteredPerson(filteredPerson.concat(returnedPerson));
+          setSuccessMessage(`${returnedPerson.name} is successfully added`);
+          setTimeout(() => {
+            setSuccessMessage("");
+          }, 3000);
         })
         .catch((error) => {
           console.error("Error updating the number:", error.message);
@@ -153,6 +160,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification successMessage={successMessage} />
       <Filter
         searchPerson={searchPerson}
         handleSearchPerson={handleSearchPerson}
