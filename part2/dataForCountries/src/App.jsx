@@ -4,6 +4,7 @@ import axios from "axios";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchItem, setSearchItem] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     if (searchItem.trim() === "") {
@@ -32,6 +33,8 @@ const App = () => {
     }
   };
 
+  const handleCountryButton = (country) => setSelectedCountry(country);
+
   return (
     <div>
       <h1>Country Information App</h1>
@@ -53,26 +56,39 @@ const App = () => {
           <h3>Matching Countries:</h3>
           <ul>
             {countries.map((country) => (
-              <li key={country.name.common}>{country.name.common}</li>
+              <li key={country.name.common}>
+                {country.name.common}{" "}
+                <button onClick={() => handleCountryButton(country)}>Show</button>
+              </li>
             ))}
           </ul>
         </div>
       )}
 
-      {countries.length === 1 && (
+      {selectedCountry && (
         <div>
-          <h3>{countries[0].name.common}</h3>
-          <p>Capital: {countries[0].capital}</p>
-          <p>Area: {countries[0].area}</p>
+          <h3>{selectedCountry.name.common}</h3>
+          <p>Capital: {selectedCountry.capital}</p>
+          <p>Area: {selectedCountry.area}</p>
           <p>
             Language(s):{" "}
-            {countries[0].languages && renderLanguage(countries[0].languages)}
+            {selectedCountry.languages &&
+              renderLanguage(selectedCountry.languages)}
           </p>
           <p>Flag:</p>
           {
             <img
-              src={countries[0].flags.png}
-              alt={`${countries[0].name.common}'s flag`}
+              src={selectedCountry.flags.png}
+              alt={`${selectedCountry.name.common}'s flag`}
+            ></img>
+          }
+          <p>Coat of Arms:</p>
+          {
+            <img
+              src={selectedCountry.coatOfArms.svg}
+              alt={`${selectedCountry.name.common}'s Coat of Arms`}
+              width="300px"
+              height="250px"
             ></img>
           }
         </div>
