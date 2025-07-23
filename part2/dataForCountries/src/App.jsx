@@ -5,6 +5,8 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchItem, setSearchItem] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     if (searchItem.trim() === "") {
@@ -16,12 +18,34 @@ const App = () => {
         const url = `https://restcountries.com/v3.1/name/${searchItem}`;
         const response = await axios.get(url);
         setCountries(response.data);
+        setSelectedCountry(null);
+        setWeather(null);
+
+        if (response.data.length === 1) {
+          const capital =
+            response.data[0].capital && response.data[0].capital[0];
+          fetchWeatherData(capital);
+        }
       } catch (error) {
         console.error("Error fetching data:", error.data);
       }
     };
     fetchCountry();
   }, [searchItem]);
+
+  const fetchWeatherData = async (capital) => {
+    try {
+      const apiKey = import.meta.env.VITE_SOME_KEY;
+      const v2_5 = `https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${apiKey}&units=metric`;
+      const weatherResponse = await axios.get(v2_5);
+      setWeather(weatherResponse.data);
+      setApiError(null);
+    } catch (error) {
+      console.error("Error fetching weather data:", error.data);
+      setWeather(null);
+      setApiError("failed to fetch weather data");
+    }
+  };
 
   const renderLanguage = (languages) => {
     if (Array.isArray(languages)) {
@@ -33,8 +57,11 @@ const App = () => {
     }
   };
 
-  const handleCountryButton = (country) => setSelectedCountry(country);
-
+  const handleCountryButton = (country) => {
+    setSelectedCountry(country);
+    const capital = country.capital;
+    fetchWeatherData(capital);
+  };
   return (
     <div>
       <h1>Country Information App</h1>
@@ -58,7 +85,9 @@ const App = () => {
             {countries.map((country) => (
               <li key={country.name.common}>
                 {country.name.common}{" "}
-                <button onClick={() => handleCountryButton(country)}>Show</button>
+                <button onClick={() => handleCountryButton(country)}>
+                  Show
+                </button>
               </li>
             ))}
           </ul>
@@ -82,15 +111,63 @@ const App = () => {
               alt={`${selectedCountry.name.common}'s flag`}
             ></img>
           }
-          <p>Coat of Arms:</p>
+          <p>Weather Map Data</p>
+          {weather && (
+            <div>
+              <h3>weather in {selectedCountry.capital[0]}</h3>
+              <p>Temperature: {weather.main.temp}°C</p>
+              <p>Humidity: {weather.main.humidity}</p>
+              <p>Wind Speed: {weather.wind.speed} </p>
+              <p>Weather Description: {weather.weather[0].description}</p>
+              <p>Weather Icon: </p>
+              {weather.weather[0].icon && (
+                <img
+                  src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+                  alt="Weather Icon"
+                ></img>
+              )}
+            </div>
+          )}
+
+          {apiError && <p>{apiError}</p>}
+        </div>
+      )}
+
+      {countries.length === 1 && (
+        <div>
+          <h3>{countries[0].name.common}</h3>
+          <p>Capital: {countries[0].capital}</p>
+          <p>Area: {countries[0].area}</p>
+          <p>
+            Language(s):{" "}
+            {countries[0].languages && renderLanguage(countries[0].languages)}
+          </p>
+          <p>Flag:</p>
           {
             <img
-              src={selectedCountry.coatOfArms.svg}
-              alt={`${selectedCountry.name.common}'s Coat of Arms`}
-              width="300px"
-              height="250px"
+              src={countries[0].flags.png}
+              alt={`${countries[0].name.common}'s flag`}
             ></img>
           }
+          <p>Weather Map Data</p>
+          {weather && (
+            <div>
+              <h3>weather in {countries[0].capital[0]}</h3>
+              <p>Temperature: {weather.main.temp}°C</p>
+              <p>Humidity: {weather.main.humidity}</p>
+              <p>Wind Speed: {weather.wind.speed} </p>
+              <p>Weather Description: {weather.weather[0].description}</p>
+              <p>Weather Icon: </p>
+              {weather.weather[0].icon && (
+                <img
+                  src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+                  alt="Weather Icon"
+                ></img>
+              )}
+            </div>
+          )}
+
+          {apiError && <p>{apiError}</p>}
         </div>
       )}
     </div>
