@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Names from "./components/Names";
 import nameService from "./service/name";
-import Notification from "./components/Notification";
 import "./index.css";
 
 const Filter = ({ searchPerson, handleSearchPerson }) => {
@@ -57,12 +56,12 @@ const App = () => {
   const [filteredPerson, setFilteredPerson] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const hook = () => {
-    console.log("effect");
     nameService
       .getAll()
       .then((initialPerson) => {
-        console.log("promise fulfilled");
         setPersons(initialPerson);
         setFilteredPerson(initialPerson);
       })
@@ -85,13 +84,10 @@ const App = () => {
 
     if (nameExist) {
       const confirmed = window.confirm(
-        `${nameExist.name} is already added to phonebook`
+        `${nameExist.name} is already added to the phonebook, replace the old number with new one?`
       );
-      if (!confirmed) {
-        // if user doesn't confirm the entry to be true, do nothing
-        return;
-      }
-      //update logic
+      if (!confirmed) return;
+
       nameService
         .update(nameExist.id, nameObject)
         .then((updatedPerson) => {
@@ -102,9 +98,19 @@ const App = () => {
             prevFilteredPerson.id === nameExist.id ? updatedPerson : persons;
           });
         })
+
         .catch((error) => {
-          console.error("Error updating the number:", error.message);
-          alert("Error updating the number");
+          if (error.response && error.response.status === 404) {
+            setErrorMessage(
+              `Information of ${nameExist.name} has already been removed from the server`
+            );
+            setTimeout(() => setErrorMessage(""), 4000);
+            setPersons(persons.filter((p) => p.id !== nameExist.id));
+            setFilteredPerson(filteredPerson.filter((p) => p.id !== nameExist.id));
+          } else {
+            console.error("Error updating the number:", error.message);
+            alert("Error updating the number");
+          }
         });
     } else {
       nameService
@@ -160,7 +166,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification successMessage={successMessage} />
+     
+      {successMessage && <div className="success-message">{successMessage}</div>}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+
       <Filter
         searchPerson={searchPerson}
         handleSearchPerson={handleSearchPerson}
