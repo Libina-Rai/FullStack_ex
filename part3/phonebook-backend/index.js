@@ -1,6 +1,7 @@
 const express = require("express");
 
 const app = express();
+app.use(express.json());
 
 let persons = [
     { 
@@ -44,6 +45,18 @@ app.get("/api/persons/:id", (req, res) => {
   }
   res.send(person);
 });
+
+const generatedId = () => {
+  const maxId = persons.length > 0 ? Math.floor(Math.random() * (200 - 5 + 1) + 5) : 0;
+  return maxId + 1;
+}
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  body.id = generatedId();
+  persons = persons.concat(body);
+  res.status(201).send(persons);
+})
 
 //Deleting a single person 
 app.delete("/api/persons/:id",(req, res)=>{
