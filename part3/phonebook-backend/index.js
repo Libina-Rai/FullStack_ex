@@ -3,7 +3,21 @@ const morgan = require("morgan");
 
 const app = express();
 app.use(express.json());
-app.use(morgan("tiny"));
+
+//Defining a custom token for morgan to log the request body for POST request
+morgan.token("req-body", (req) => {
+  if (req.method === "POST") {
+    return JSON.stringify(req.body);
+  }
+  return "";
+});
+
+// MiddleWare for logging with custom format
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :req-body"
+  )
+);
 
 let persons = [
   {
@@ -66,8 +80,8 @@ app.post("/api/persons", (req, res) => {
   }
 
   const existingName = persons.find((person) => person.name === body.name);
-  if(existingName){
-    res.status(400).json({error: "name must be unique"});
+  if (existingName) {
+    res.status(400).json({ error: "name must be unique" });
   }
 
   persons = persons.concat(body);
