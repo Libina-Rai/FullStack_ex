@@ -1,9 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const path = require("path");
 
 const PORT = process.env.PORT || 3001
-
 
 const app = express();
 app.use(express.json());
@@ -99,6 +99,12 @@ app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   let deletedPerson = persons.filter((person) => person.id !== id);
   res.send(deletedPerson);
+});
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.listen(PORT, () => {
