@@ -1,8 +1,14 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
+const path = require("path");
+
+const PORT = process.env.PORT || 3001
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+
 
 //Defining a custom token for morgan to log the request body for POST request
 morgan.token("req-body", (req) => {
@@ -59,7 +65,7 @@ app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   const person = persons.find((person) => person.id === id);
   if (!person) {
-    res.status(404).send(`Person with id:${id} is not found`);
+    return res.status(404).send(`Person with id:${id} is not found`);
   }
   res.send(person);
 });
@@ -76,12 +82,12 @@ app.post("/api/persons", (req, res) => {
   const body = req.body;
   body.id = generatedId();
   if (!body.name || !body.number) {
-    res.status(404).json({ error: "name or number is missing" });
+    return res.status(404).json({ error: "name or number is missing" });
   }
 
   const existingName = persons.find((person) => person.name === body.name);
   if (existingName) {
-    res.status(400).json({ error: "name must be unique" });
+    return res.status(400).json({ error: "name must be unique" });
   }
 
   persons = persons.concat(body);
@@ -95,6 +101,12 @@ app.delete("/api/persons/:id", (req, res) => {
   res.send(deletedPerson);
 });
 
-app.listen(3001, () => {
-  console.log("Server running on port 3001");
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
