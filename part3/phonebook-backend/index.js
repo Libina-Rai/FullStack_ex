@@ -71,6 +71,24 @@ app.post("/api/persons", (req, res) => {
     });
 });
 
+// ===== DELETE route: Remove a person from MongoDB =====
+app.delete("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+
+  Person.findByIdAndDelete(id)
+    .then((result) => {
+      if (result) {
+        res.status(204).end(); // Deleted successfully
+      } else {
+        res.status(404).json({ error: "Person not found" });
+      }
+    })
+    .catch((err) => {
+      console.error("Error deleting person:", err.message);
+      res.status(400).json({ error: "Malformatted id" });
+    });
+});
+
 // ===== Serve frontend =====
 app.use(express.static(path.join(__dirname, "dist")));
 app.get("*", (req, res) => {
