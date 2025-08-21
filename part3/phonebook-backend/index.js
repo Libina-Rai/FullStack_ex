@@ -74,6 +74,27 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((err) => next(err));
 });
 
+// ===== UPDATE a person's number =====
+app.put("/api/persons/:id", (req, res, next) => {
+  const { name, number } = req.body;
+
+  if (!name || !number) {
+    return res.status(400).json({ error: "name or number is missing" });
+  }
+
+  // Find person by ID and update the number
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" } // return updated doc and validate
+  )
+    .then((updatedPerson) => {
+      if (updatedPerson) res.json(updatedPerson);
+      else res.status(404).json({ error: "Person not found" });
+    })
+    .catch((err) => next(err));
+});
+
 // ===== Serve frontend =====
 app.use(express.static(path.join(__dirname, "dist")));
 app.get("*", (req, res) => {
