@@ -8,85 +8,70 @@ const Person = require("./models/person"); // Mongoose model
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+// ===== Middlewares =====
 app.use(express.json());
 app.use(cors());
 
 // Morgan logging with request body for POST
-morgan.token("req-body", (req) => {
-  if (req.method === "POST") {
-    return JSON.stringify(req.body);
-  }
-  return "";
-});
-
+morgan.token("req-body", (req) =>
+  req.method === "POST" ? JSON.stringify(req.body) : ""
+);
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :req-body"
   )
 );
 
-// ===== GET all persons from MongoDB =====
-app.get("/api/persons", (req, res) => {
+// ===== GET all persons =====
+app.get("/api/persons", (req, res, next) => {
   Person.find({})
     .then((persons) => res.json(persons))
-    .catch((err) => {
-      console.error("Error fetching persons:", err.message);
-      res.status(500).json({ error: "Database error" });
-    });
+    .catch((err) => next(err));
 });
 
 // ===== GET phonebook info =====
-app.get("/info", (req, res) => {
+app.get("/info", (req, res, next) => {
   Person.countDocuments({})
     .then((count) => {
       res.send(`Phonebook has info for ${count} people.<br><br>${Date()}`);
     })
-    .catch((err) => {
-      console.error("Error counting persons:", err.message);
-      res.status(500).json({ error: "Database error" });
-    });
+    .catch((err) => next(err));
 });
 
-// ===== POST: Add a new person to MongoDB =====
-app.post("/api/persons", (req, res) => {
+// ===== GET person by ID =====
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) res.json(person);
+      else res.status(404).json({ error: "Person not found" });
+    })
+    .catch((err) => next(err));
+});
+
+// ===== POST new person =====
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.number) {
     return res.status(400).json({ error: "name or number is missing" });
   }
 
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  });
+  const person = new Person({ name: body.name, number: body.number });
 
   person
     .save()
-    .then((savedPerson) => {
-      res.status(201).json(savedPerson);
-    })
-    .catch((err) => {
-      console.error("Error saving person:", err.message);
-      res.status(500).json({ error: "Database error" });
-    });
+    .then((savedPerson) => res.status(201).json(savedPerson))
+    .catch((err) => next(err));
 });
 
-// ===== DELETE route: Remove a person from MongoDB =====
-app.delete("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
-
-  Person.findByIdAndDelete(id)
+// ===== DELETE person =====
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
     .then((result) => {
-      if (result) {
-        res.status(204).end(); // Deleted successfully
-      } else {
-        res.status(404).json({ error: "Person not found" });
-      }
+      if (result) res.status(204).end();
+      else res.status(404).json({ error: "Person not found" });
     })
-    .catch((err) => {
-      console.error("Error deleting person:", err.message);
-      res.status(400).json({ error: "Malformatted id" });
-    });
+    .catch((err) => next(err));
 });
 
 // ===== Serve frontend =====
@@ -97,18 +82,23 @@ app.get("*", (req, res) => {
 
 // ===== Unknown endpoint handler =====
 app.use((req, res) => {
-  res.status(404).send({ error: "Unknown endpoint" });
+  res.status(404).json({ error: "Unknown endpoint" });
 });
 
 // ===== Error handling middleware =====
 app.use((err, req, res, next) => {
   console.error(err.message);
+
   if (err.name === "CastError") {
-    return res.status(400).send({ error: "Malformatted id" });
+    return res.status(400).json({ error: "Malformatted id" });
+  } else if (err.name === "ValidationError") {
+    return res.status(400).json({ error: err.message });
   }
-  res.status(500).send({ error: "Internal server error" });
+
+  res.status(500).json({ error: "Internal server error" });
 });
 
+// ===== Start server =====
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
