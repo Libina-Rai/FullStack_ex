@@ -33,19 +33,25 @@ app.get("/api/persons", (req, res, next) => {
 app.get("/info", (req, res, next) => {
   Person.countDocuments({})
     .then((count) => {
-      res.send(`Phonebook has info for ${count} people.<br><br>${Date()}`);
+      res.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `);
     })
-    .catch((err) => next(err));
+    .catch((error) => next(error));
 });
 
 // ===== GET person by ID =====
 app.get("/api/persons/:id", (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
-      if (person) res.json(person);
-      else res.status(404).json({ error: "Person not found" });
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
     })
-    .catch((err) => next(err));
+    .catch((error) => next(error)); // sends errors to error handler
 });
 
 // ===== POST new person =====
