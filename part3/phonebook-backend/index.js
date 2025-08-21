@@ -47,6 +47,30 @@ app.get("/info", (req, res) => {
     });
 });
 
+// ===== POST: Add a new person to MongoDB =====
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: "name or number is missing" });
+  }
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  person
+    .save()
+    .then((savedPerson) => {
+      res.status(201).json(savedPerson);
+    })
+    .catch((err) => {
+      console.error("Error saving person:", err.message);
+      res.status(500).json({ error: "Database error" });
+    });
+});
+
 // ===== Serve frontend =====
 app.use(express.static(path.join(__dirname, "dist")));
 app.get("*", (req, res) => {
