@@ -1,33 +1,17 @@
-import globals from "globals";
 import js from "@eslint/js";
-import stylisticJs from "@stylistic/eslint-plugin-js";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
 
-export default [
-  js.configs.recommended,
-  {
-    files: ["**/*.js"],
-    languageOptions: {
-      sourceType: "commonjs",
-      globals: { ...globals.node },
-      ecmaVersion: "latest",
-    },
-    plugins: {
-      "@stylistic/js": stylisticJs,
-    },
-    rules: {
-      "@stylistic/js/indent": ["error", 2],
-      "@stylistic/js/quotes": ["error", "double"],
-      "@stylistic/js/semi": ["error", "always"],
-      "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-      eqeqeq: "error",
-      "no-trailing-spaces": "error",
-      "object-curly-spacing": ["error", "always"],
-      "arrow-spacing": ["error", { before: true, after: true }],
-      "no-console": "off",
-      "no-empty": "off",
-    },
+export default defineConfig({
+  ignores: ["node_modules/", ".env", "dist/"], // <-- ignore these files/folders
+  files: ["**/*.{js,mjs,cjs}"],
+  plugins: { js },
+  extends: ["js/recommended"],
+  languageOptions: {
+    globals: globals.node, // Node.js globals like process, __dirname
+    sourceType: "commonjs",
   },
-  {
-    ignores: ["dist/**"],
+  rules: {
+    "no-unused-vars": ["error", { argsIgnorePattern: "^next$" }], // ignore unused 'next' param
   },
-];
+});
