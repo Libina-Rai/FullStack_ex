@@ -27,10 +27,6 @@ const assert = require("node:assert");
      assert.strictEqual(response.body.length, initialBlogs.length);
   })
 
-  after(async () => {
-  await mongoose.connection.close()
-  })
-
   test('unique identifier property of blog posts is named id', async () => {
   const response = await api.get('/api/blogs').expect(200)
   response.body.forEach(blog => {
@@ -38,6 +34,41 @@ const assert = require("node:assert");
     assert.strictEqual(blog._id, undefined)  // _id should not exist
   })
 })
+})
+
+describe('POST /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(initialBlogs)
+  })
+
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'http://newblog.com',
+      likes: 10
+    }
+
+    // POST the new blog
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // Check that total number of blogs increased
+    const blogsAtEnd = await Blog.find({})
+    assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
+
+    // Optional: Check that new blog exists
+    const titles = blogsAtEnd.map(b => b.title)
+    assert.ok(titles.includes(newBlog.title))
+  })
+
+  after(async () => {
+    await mongoose.connection.close()
+  })
 })
 
 
