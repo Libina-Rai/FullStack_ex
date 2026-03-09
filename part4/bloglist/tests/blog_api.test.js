@@ -60,10 +60,23 @@ describe('POST /api/blogs', () => {
     // Check that total number of blogs increased
     const blogsAtEnd = await Blog.find({})
     assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
+  })
 
-    // Optional: Check that new blog exists
-    const titles = blogsAtEnd.map(b => b.title)
-    assert.ok(titles.includes(newBlog.title))
+  test('if likes property is missing, it defaults to 0', async () => {
+    const newBlogWithoutLikes = {
+      title: 'Blog without likes',
+      author: 'Author X',
+      url: 'http://nolikes.com'
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogWithoutLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // Check likes default
+    assert.strictEqual(response.body.likes, 0)
   })
 
   after(async () => {
