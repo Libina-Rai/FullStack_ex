@@ -30,5 +30,15 @@ const assert = require("node:assert");
   after(async () => {
   await mongoose.connection.close()
   })
+
+  test('unique identifier property of blog posts is named id', async () => {
+  const response = await api.get('/api/blogs').expect(200)
+  response.body.forEach(blog => {
+    assert.ok(blog.id)                // must exist
+    assert.strictEqual(blog._id, undefined)  // _id should not exist
+  })
 })
+})
+
+
 
