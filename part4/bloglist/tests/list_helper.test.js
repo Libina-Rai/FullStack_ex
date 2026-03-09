@@ -1,4 +1,4 @@
-const { test, describe } = require('node:test')
+const { test, describe, it } = require('node:test')
 const assert = require('node:assert')
 
 const listHelper = require('../utils/list_helper')
@@ -109,5 +109,32 @@ describe('favorite Blog', () => {
     ]
     const result = listHelper.favoriteBlog(blogsWithTie)
     assert.ok(result.likes === 10)
+  })
+})
+
+describe('most blogs', () => {
+  test('should returns the author with the most blog posts', () => {
+    const result = listHelper.mostBlogs(blogs)
+    const expected = {
+      author: 'Robert C. Martin',
+      blogs: 3
+    }
+    assert.deepStrictEqual(result, expected)
+  })
+})
+
+describe('most Likes', () => {
+  it('should returns the author with the most total likes', () => {
+    const result = listHelper.mostLikes(blogs)
+    const expected = {
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    }
+    assert.deepStrictEqual(result, expected)
+  })
+
+  it('should returns null for empty list', () => {
+    const result = listHelper.mostLikes([])
+    assert.strictEqual(result, null)
   })
 })
