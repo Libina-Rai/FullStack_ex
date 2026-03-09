@@ -79,6 +79,32 @@ describe('POST /api/blogs', () => {
     assert.strictEqual(response.body.likes, 0)
   })
 
+  test('blog without title is rejected with 400', async () => {
+  const newBlog = {
+    author: 'Author X',
+    url: 'http://example.com',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('blog without url is rejected with 400', async () => {
+  const newBlog = {
+    title: 'Missing URL',
+    author: 'Author Y',
+    likes: 3
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
   after(async () => {
     await mongoose.connection.close()
   })
