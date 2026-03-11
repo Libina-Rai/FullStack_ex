@@ -37,7 +37,7 @@ Content-Type: application/json
 ### Add a new blog with token authentication
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByaXlhLW1nciIsImlkIjoiNjliMDQ3YjcxZDhjNWE0ZWM5Zjc5ZjhiIiwiaWF0IjoxNzczMjMwNDAyfQ.34CczbmTp39bv6iAdjmA6VNWhfDAUKyojwtrJOh6kPg
+Authorization: Bearer <token-of-blog-creator>
 {
   "title": "My Token Blog",
   "author": "muskan",
