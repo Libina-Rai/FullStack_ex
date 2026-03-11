@@ -24,11 +24,8 @@ blogsRouter.post('/', async (req, res) => {
     return res.status(400).json({ error: 'title or url missing' });
   }
 
-  // Extract token from Authorization header
-  const authorization = req.get('authorization');
-  const token = authorization && authorization.startsWith('Bearer ')
-    ? authorization.replace('Bearer ', '')
-    : null;
+  // token comes from middlewaretokenExtractor
+  const token = req.token;
 
   if (!token) {
     return res.status(401).json({ error: 'token missing' });
