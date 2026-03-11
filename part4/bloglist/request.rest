@@ -24,3 +24,24 @@ Content-Type: application/json
   "username": "priya-mgr",
   "password": "pri123456"
 }
+
+#### Login
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "priya-mgr",
+  "password": "pri123456"
+}
+
+### Add a new blog with token authentication
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "My Token Blog",
+  "author": "muskan",
+  "url": "http://example.com",
+  "likes": 5
+}
