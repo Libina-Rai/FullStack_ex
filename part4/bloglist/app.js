@@ -10,7 +10,7 @@ const app = express()
 app.use(express.json())
 
 // Routes
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 

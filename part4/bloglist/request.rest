@@ -45,3 +45,7 @@ Authorization: Bearer YOUR_TOKEN_HERE
   "url": "http://example.com",
   "likes": 5
 }
+
+### delete a blog (only works for the creator)
+DELETE http://localhost:3003/api/blogs/{id}
+Authorization: Bearer <token-of-blog-creator>
