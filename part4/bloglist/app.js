@@ -9,6 +9,9 @@ const loginRouter = require('./controllers/logins')
 const app = express()
 app.use(express.json())
 
+const cors = require('cors')
+app.use(cors());
+
 // Routes
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter)
