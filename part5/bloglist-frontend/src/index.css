@@ -20,3 +20,10 @@
   border-color: red;
   background-color: #ffe6e6; /* optional light red background */
 }
+
+/* styles for the blog list */
+.blog {
+  padding: 10px;
+  border: solid 1px;
+  margin: 5px 0 0 1px;
+}
