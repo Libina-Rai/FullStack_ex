@@ -92,6 +92,18 @@ const App = () => {
   setBlogs(blogs.map(b => b.id === blog.id ? returnedBlog : b))
 }
 
+const handleRemove = async (blog) => {
+  const confirmDelete = window.confirm(
+    `Remove blog "${blog.title}" by ${blog.author}?`
+  )
+
+  if (!confirmDelete) return
+
+  await blogService.remove(blog.id)
+
+  setBlogs(blogs.filter(b => b.id !== blog.id))
+}
+
   if(user === null) {
     return (
       <div>
@@ -140,6 +152,7 @@ const App = () => {
         key={blog.id}
         blog={blog}
         handleLike={handleLike}
+        handleRemove={handleRemove}
         />
       )}
     </div>
