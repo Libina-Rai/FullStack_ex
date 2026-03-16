@@ -45,7 +45,7 @@ blogsRouter.delete('/:id', userExtractor, async (req, res) => {
   const user = req.user; // directly from middleware
   const blog = await Blog.findById(req.params.id);
 
-  if (!blog) {
+  if (!updatedBlog) {
     return res.status(404).json({ error: 'blog not found' });
   }
 
