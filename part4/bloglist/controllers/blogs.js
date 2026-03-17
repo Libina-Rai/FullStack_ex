@@ -45,7 +45,7 @@ blogsRouter.delete('/:id', userExtractor, async (req, res) => {
   const user = req.user; // directly from middleware
   const blog = await Blog.findById(req.params.id);
 
-  if (!updatedBlog) {
+  if (!blog){
     return res.status(404).json({ error: 'blog not found' });
   }
 
@@ -73,6 +73,9 @@ blogsRouter.put('/:id', async (req, res) => {
     
     { new: true }
   ).populate('user', { username: 1, name: 1});
+  if(!updatedBlog) {
+    return res.status(404).json({ error: 'blog not found' });
+  }
   res.json(updatedBlog);
 });
 
