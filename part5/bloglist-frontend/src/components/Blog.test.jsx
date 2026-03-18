@@ -1,18 +1,17 @@
 import { render, screen } from '@testing-library/react'
-import { test, expect } from 'vitest' 
+import { test, expect, vi } from 'vitest' 
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import Blog from './Blog'
 
-test('renders title and author but not url or likes by default', () => {
-  const blog = {
+const blog = {
     title: 'Learning React',
     author: 'Alex Johnson',
     url: 'http://example.com',
     likes: 15,
     user: { name: 'Alex Johnson' }
   }
-
+test('renders title and author but not url or likes by default', () => {
   render(
     <Blog
       blog={blog}
@@ -56,3 +55,19 @@ test('shows url and likes when view button is clicked', async () => {
   expect(screen.getByText('http://example.com')).toBeInTheDocument()
   expect(screen.getByText('likes 15')).toBeInTheDocument()
 })
+
+test('clicking the like button twice calls event handler twice', async () => {
+  const user = userEvent.setup()
+  const mockHandler = vi.fn()
+
+    render(<Blog blog={blog} handleLike={mockHandler} handleRemove={() => {}} />)
+
+    // show like button
+    await user.click(screen.getByText('view'))
+
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockHandler).toHaveBeenCalledTimes(2)
+  })
