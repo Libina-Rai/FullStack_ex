@@ -9,15 +9,16 @@ const Blog = ({ blog, handleLike, handleRemove }) => {
   
    return (
     <div className='blog'>
-      <div>
-        {blog.title} {blog.author}
+      <div className='blog-summary'>
+        <span className="blog-title">{blog.title}</span> 
+        <span className="blog-author">{blog.author}</span>
         <button onClick={toggleVisibility}>
           {visible ? 'hide' : 'view'}
         </button>
       </div>
 
       {visible && (
-        <div>
+        <div className='blog-details'>
           <div>{blog.url}</div>
           <div>likes {blog.likes} <button onClick={() => handleLike(blog)}>
               like
