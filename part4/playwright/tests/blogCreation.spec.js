@@ -1,5 +1,5 @@
 const { describe, test, beforeEach, expect } = require("@playwright/test");
-const { login } = require("./helpers");
+const { login, createBlog } = require("./helpers");
 
 describe("When logged in", () => {
   beforeEach(async ({ page, request }) => {
@@ -27,25 +27,48 @@ describe("When logged in", () => {
   });
 
   test("a new blog can be created", async ({ page }) => {
-    const title = "My First Blog";
+    const title = `My First Blog ${Date.now()}`;
     const author = "Supriya Tamang";
 
-    // open blog form
-    await page.getByRole("button", { name: /create new( blog)?/i }).click();
+    await createBlog({
+      page,
+      title,
+      author,
+      url: "http://example.com",
+    });
 
-    // fill in blog details
-    await page.getByPlaceholder("title").fill(title);
-    await page.getByPlaceholder("author").fill(author);
-    await page.getByPlaceholder("url").fill("http://example.com");
-
-    // submit form
-    await page.getByRole("button", { name: "create" }).click();
-
-    // wait for successful create feedback
+    // check success notification
     await expect(page.getByText(`a new blog ${title} added`)).toBeVisible();
 
-    // verify created blog is visible in the list
-    const blogItem = page.locator(".blog").filter({ hasText: `${title}${author}` }).last();
+    // verify blog appears in list
+    const blogItem = page.locator(".blog", { hasText: title });
     await expect(blogItem).toBeVisible();
+  });
+  
+  //test for liking a blog
+  test("a blog can be liked", async ({ page }) => {
+    const title = `Like Test Blog ${Date.now()}`;
+
+    await createBlog({
+      page,
+      title,
+      author: "Supriya Tamang",
+      url: "http://example.com",
+    });
+
+    const blogItem = page.locator(".blog", { hasText: title });
+    await expect(blogItem).toBeVisible();
+
+    // open blog details
+    await blogItem.getByRole("button", { name: "view" }).click();
+
+    // initial likes
+    await expect(blogItem.getByText(/likes 0/i)).toBeVisible();
+
+    // click like
+    await blogItem.getByRole("button", { name: "like" }).click();
+
+    // verify likes increased
+    await expect(blogItem.getByText(/likes 1/i)).toBeVisible();
   });
 });

@@ -6,4 +6,17 @@ async function login({ page, username, password }) {
   await page.click('button[type="submit"]');
 }
 
-module.exports = { login };
+async function createBlog({ page, title, author, url }) {
+  // open form
+  await page.getByRole('button', { name: /create new( blog)?/i }).click();
+
+  // fill form
+  await page.getByPlaceholder('title').fill(title);
+  await page.getByPlaceholder('author').fill(author);
+  await page.getByPlaceholder('url').fill(url);
+
+  // submit
+  await page.getByRole('button', { name: 'create' }).click();
+}
+
+module.exports = { login, createBlog };
