@@ -71,4 +71,33 @@ describe("When logged in", () => {
     // verify likes increased
     await expect(blogItem.getByText(/likes 1/i)).toBeVisible();
   });
+
+  //test for deleting a blog
+  test("a blog can be deleted by its creator", async ({ page }) => {
+  const title = `Delete Test Blog ${Date.now()}`;
+
+  await createBlog({
+    page,
+    title,
+    author: "Supriya Tamang",
+    url: "http://example.com",
+  });
+
+  const blogItem = page.locator(".blog", { hasText: title });
+  await expect(blogItem).toBeVisible();
+
+  // open details
+  await blogItem.getByRole("button", { name: "view" }).click();
+
+  // handle confirm dialog
+  page.on("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+
+  // click remove
+  await blogItem.getByRole("button", { name: "remove" }).click();
+
+  // verify removal
+  await expect(page.locator(".blog", { hasText: title })).toHaveCount(0);
+});
 });
