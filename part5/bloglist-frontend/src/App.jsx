@@ -155,6 +155,7 @@ const handleRemove = async (blog) => {
         blog={blog}
         handleLike={handleLike}
         handleRemove={handleRemove}
+        user={user}
         />
       )}
     </div>
