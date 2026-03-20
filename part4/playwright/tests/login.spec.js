@@ -35,6 +35,6 @@ describe('Login', () => {
     await page.fill('input[name="password"]', 'wrongpassword')
     await page.click('button[type="submit"]')
 
-    await expect(page.getByText('wrong username or password')).toBeVisible()
+    await expect(page.getByText('Wrong username or password')).toBeVisible()
   })
 })

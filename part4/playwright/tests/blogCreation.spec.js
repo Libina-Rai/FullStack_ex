@@ -39,7 +39,12 @@ describe("When logged in", () => {
   //test for liking a blog
   test("a blog can be liked", async ({ page }) => {
     const title = `Like Test Blog ${Date.now()}`;
-    await createBlog({ page, title, author: "Supriya Tamang", url: "http://example.com" });
+    await createBlog({
+      page,
+      title,
+      author: "Supriya Tamang",
+      url: "http://example.com",
+    });
 
     const blogItem = page.locator(".blog", { hasText: title });
     await expect(blogItem).toBeVisible();
@@ -55,7 +60,12 @@ describe("When logged in", () => {
   test("a blog can be deleted by its creator", async ({ page }) => {
     const title = `Delete Test Blog ${Date.now()}`;
 
-    await createBlog({ page, title, author: "Supriya Tamang", url: "http://example.com" });
+    await createBlog({
+      page,
+      title,
+      author: "Supriya Tamang",
+      url: "http://example.com",
+    });
 
     const blogItem = page.locator(".blog", { hasText: title });
     await expect(blogItem).toBeVisible();
@@ -78,11 +88,20 @@ describe("When logged in", () => {
 
     // create second user
     await request.post("http://localhost:3003/api/users", {
-      data: { name: "Second User", username: "second-user", password: "password123" },
+      data: {
+        name: "Second User",
+        username: "second-user",
+        password: "password123",
+      },
     });
 
     // create blog as first user
-    await createBlog({ page, title, author: "Creator", url: "http://example.com" });
+    await createBlog({
+      page,
+      title,
+      author: "Creator",
+      url: "http://example.com",
+    });
 
     // logout first user
     await page.getByRole("button", { name: /logout/i }).click();
@@ -96,6 +115,65 @@ describe("When logged in", () => {
     await blogItem.getByRole("button", { name: "view" }).click();
 
     // remove button should NOT exist for second user
-    await expect(blogItem.getByRole("button", { name: "remove" })).toHaveCount(0);
+    await expect(blogItem.getByRole("button", { name: "remove" })).toHaveCount(
+      0,
+    );
   });
+
+  //test for blogs listed in descending order of likes
+  test("blogs are displayed in descending order of likes", async ({ page, request }) => {
+  // reset DB
+  await request.post("http://localhost:3003/api/testing/reset");
+
+  // create user
+  await request.post("http://localhost:3003/api/users", {
+    data: { name: "Priya Magar", username: "priya-mgr", password: "pri123456" },
+  });
+
+  // login via API
+  const loginResponse = await request.post("http://localhost:3003/api/login", {
+    data: { username: "priya-mgr", password: "pri123456" }
+  });
+  const user = await loginResponse.json();
+  const token = user.token;
+
+  // create only the 3 blogs we want for this test
+  const blogsToCreate = [
+    { title: "Most Liked Blog", author: "Author 1", url: "http://example.com", likes: 10 },
+    { title: "Medium Blog", author: "Author 2", url: "http://example.com", likes: 5 },
+    { title: "Least Liked Blog", author: "Author 3", url: "http://example.com", likes: 2 },
+  ];
+
+  for (const blog of blogsToCreate) {
+    await request.post("http://localhost:3003/api/blogs", {
+      data: blog,
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  }
+
+  // simulate login in localStorage BEFORE loading page
+  await page.addInitScript((user) => {
+    window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
+  }, user);
+
+  // go to frontend
+  await page.goto("http://localhost:5173");
+
+  // wait for ONLY our blogs (filter by title)
+  const blogTitlesLocator = page.locator(".blog .blog-title", {
+    hasText: /Most Liked Blog|Medium Blog|Least Liked Blog/
+  });
+
+  await expect(blogTitlesLocator).toHaveCount(3);
+
+  // get titles in order
+  const blogTitles = await blogTitlesLocator.allTextContents();
+
+  // assert correct descending order
+  expect(blogTitles).toEqual([
+    "Most Liked Blog",
+    "Medium Blog",
+    "Least Liked Blog"
+  ]);
+});
 });
