@@ -116,6 +116,7 @@ const handleRemove = async (blog) => {
             <input
               type='text'
               value={username}
+              name='username'
               onChange={({ target }) => setUsername(target.value)} 
             />
           </div>
@@ -124,6 +125,7 @@ const handleRemove = async (blog) => {
             <input
               type='password'
               value={password}
+              name='password'
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
@@ -153,6 +155,7 @@ const handleRemove = async (blog) => {
         blog={blog}
         handleLike={handleLike}
         handleRemove={handleRemove}
+        user={user}
         />
       )}
     </div>
