@@ -11,7 +11,8 @@ const Filter = () => {
 
   return (
     <div style={{ marginBottom: 10 }}>
-      filter <input onChange={handleChange} />
+      <label htmlFor="anecdote-filter">filter </label>
+      <input id="anecdote-filter" onChange={handleChange} />
     </div>
   );
 };
