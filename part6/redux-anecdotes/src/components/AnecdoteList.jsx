@@ -2,20 +2,28 @@ import { useSelector, useDispatch } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
+  const anecdotes = useSelector(state => state.anecdotes) // get the anecdotes from the store
+  const filter = useSelector(state => state.filter) // get the filter value from the store
+  const dispatch = useDispatch()
 
-const anecdotes = useSelector((state) => state); //accessing the state from the store
-  const sortedAnecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
-  const dispatch = useDispatch(); //dispatching actions to the store
+  // filter anecdotes first
+  const filteredAnecdotes = anecdotes.filter(anecdote =>
+    anecdote.content.toLowerCase().includes(filter.toLowerCase())
+  )
 
-  //handling the voting of an anecdote
+  // then sort the filtered anecdotes by votes in descending order
+  const sortedAnecdotes = [...filteredAnecdotes].sort(
+    (a, b) => b.votes - a.votes
+  )
+
+  // function to handle voting for an anecdote
   const vote = (id) => {
-    dispatch(voteAnecdote(id));
-  };
+    dispatch(voteAnecdote(id))
+  }
 
   return (
     <div>
-      <h2>Anecdotes</h2>
-      {sortedAnecdotes.map((anecdote) => (
+      {sortedAnecdotes.map(anecdote => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
@@ -25,7 +33,7 @@ const anecdotes = useSelector((state) => state); //accessing the state from the 
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 export default AnecdoteList
