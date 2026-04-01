@@ -9,6 +9,7 @@ const AnecdoteList = () => {
   // filter anecdotes first
   const filteredAnecdotes = anecdotes.filter(
     (anecdote) =>
+      anecdote.content &&
       typeof anecdote.content === "string" &&
       anecdote.content.toLowerCase().includes(filter.toLowerCase()),
   );

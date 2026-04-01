@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
-import { create } from "../reducers/anecdoteReducer";
-import { createNew } from "../services/anecdotes";
+import { createAnecdote } from "../reducers/anecdoteReducer";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -11,8 +10,8 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value;
     event.target.anecdote.value = "";
 
-    const saved = await createNew(content);
-    dispatch(create(saved)); // add the new anecdote to the store after saving to backend
+    // Dispatch the async thunk
+    dispatch(createAnecdote(content));
   };
 
   return (
