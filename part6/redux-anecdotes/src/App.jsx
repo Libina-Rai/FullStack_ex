@@ -3,18 +3,16 @@ import AnecdoteList from "./components/AnecdoteList";
 import Filter from "./components/Filter";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { create } from "./reducers/anecdoteReducer"; // use the existing create reducer
+import { setAnecdotes } from "./reducers/anecdoteReducer";
 import { getAll } from "./services/anecdotes";
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchAnecdotes = async () => {
-      const anecdotes = await getAll();
-      anecdotes.forEach((a) => dispatch(create(a.content)));
-    };
-    fetchAnecdotes();
+    getAll().then((anecdotes) => {
+      dispatch(setAnecdotes(anecdotes)); // replace state with backend data
+    });
   }, [dispatch]);
   return (
     <div>

@@ -1,16 +1,18 @@
 import { useDispatch } from "react-redux";
-import { create } from '../reducers/anecdoteReducer'
+import { create } from "../reducers/anecdoteReducer";
+import { createNew } from "../services/anecdotes";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
 
-  const addAnecdote = (event) => {
+  const addAnecdote = async (event) => {
     event.preventDefault();
 
     const content = event.target.anecdote.value;
     event.target.anecdote.value = "";
 
-    dispatch(create(content));
+    const saved = await createNew(content);
+    dispatch(create(saved)); // add the new anecdote to the store after saving to backend
   };
 
   return (

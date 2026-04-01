@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = [];
 
 // Helper to generate unique id (used for new anecdotes)
-const getId = () => (100000 * Math.random()).toFixed(0);
+// const getId = () => (100000 * Math.random()).toFixed(0);
 
 const anecdoteSlice = createSlice({
   name: "anecdotes",
@@ -18,12 +18,7 @@ const anecdoteSlice = createSlice({
       }
     },
     create(state, action) {
-      const newAnecdote = {
-        content: action.payload,
-        id: getId(),
-        votes: 0,
-      };
-      state.push(newAnecdote);
+      state.push(action.payload);
     },
     setAnecdotes(state, action) {
       return action.payload; // replace state with fetched anecdotes
