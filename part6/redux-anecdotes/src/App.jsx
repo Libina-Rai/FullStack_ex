@@ -9,9 +9,10 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(initializeAnecdotes()).catch((error) => {
-      console.error("Failed to fetch anecdotes:", error);
-    });
+     dispatch(initializeAnecdotes())
+      .catch((error) => {
+        console.error("Failed to fetch anecdotes:", error);
+      });
   }, [dispatch]);
 
   return (
