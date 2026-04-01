@@ -34,6 +34,31 @@
       "content": "this new note after thunk",
       "votes": 0,
       "id": "m_p9jXzO818"
+    },
+    {
+      "content": "new note after notification",
+      "votes": 0,
+      "id": "U94vNB8ryXU"
+    },
+    {
+      "content": "my note which shows notification when added",
+      "votes": 0,
+      "id": "WHNO02sui_0"
+    },
+    {
+      "content": "",
+      "votes": 0,
+      "id": "0LP7yiHcOqk"
+    },
+    {
+      "content": "",
+      "votes": 0,
+      "id": "27Onc0W3BwI"
+    },
+    {
+      "content": "note with notification",
+      "votes": 0,
+      "id": "PeZmEfPpdyg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
