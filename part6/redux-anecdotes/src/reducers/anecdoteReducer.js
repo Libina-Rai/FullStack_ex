@@ -1,10 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getAll } from "../services/anecdotes";
+
+// Async thunk to fetch anecdotes from backend and initialize state
+export const initializeAnecdotes = createAsyncThunk(
+  "anecdotes/fetchAll",
+  async () => {
+    const anecdotes = await getAll();
+    return anecdotes; // this payload will go to extraReducers
+  },
+);
 
 // Start with empty state; we fetch from backend
 const initialState = [];
-
-// Helper to generate unique id (used for new anecdotes)
-// const getId = () => (100000 * Math.random()).toFixed(0);
 
 const anecdoteSlice = createSlice({
   name: "anecdotes",
@@ -20,11 +27,15 @@ const anecdoteSlice = createSlice({
     create(state, action) {
       state.push(action.payload);
     },
-    setAnecdotes(state, action) {
-      return action.payload; // replace state with fetched anecdotes
-    },
+  },
+  
+  //handle the thunk results in extraReducers
+  extraReducers: (builder) => {
+    builder.addCase(initializeAnecdotes.fulfilled, (state, action) => {
+      return action.payload; // replace state with backend data
+    });
   },
 });
 
-export const { vote, create, setAnecdotes } = anecdoteSlice.actions;
+export const { vote, create } = anecdoteSlice.actions;
 export default anecdoteSlice.reducer;
