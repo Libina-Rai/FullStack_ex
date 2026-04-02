@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAll } from "../requests";
+import { getAll } from "../services/anecdotes";
 import { useSelector } from "react-redux";
 
 const AnecdoteList = () => {
