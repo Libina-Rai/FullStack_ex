@@ -4,7 +4,7 @@ import filterReducer from './reducers/filterReducer'
 import notificationReducer from './reducers/notificationReducer'
 
 // create the Redux store using configureStore from Redux Toolkit
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     anecdotes: anecdoteReducer,
     filter: filterReducer,
@@ -12,4 +12,4 @@ const store = configureStore({
   }
 })
 
-export default store
+export default store;

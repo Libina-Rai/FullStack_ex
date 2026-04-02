@@ -3,12 +3,12 @@
     {
       "content": "If it hurts, do it more often",
       "id": "1",
-      "votes": 0
+      "votes": 1
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "2",
-      "votes": 0
+      "votes": 2
     },
     {
       "content": "this is new note ",
@@ -34,6 +34,31 @@
       "content": "this new note after thunk",
       "votes": 0,
       "id": "m_p9jXzO818"
+    },
+    {
+      "content": "new note after notification",
+      "votes": 0,
+      "id": "U94vNB8ryXU"
+    },
+    {
+      "content": "my note which shows notification when added",
+      "votes": 0,
+      "id": "WHNO02sui_0"
+    },
+    {
+      "content": "",
+      "votes": 0,
+      "id": "0LP7yiHcOqk"
+    },
+    {
+      "content": "",
+      "votes": 0,
+      "id": "27Onc0W3BwI"
+    },
+    {
+      "content": "note with notification",
+      "votes": 0,
+      "id": "PeZmEfPpdyg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

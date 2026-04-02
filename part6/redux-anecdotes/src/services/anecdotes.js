@@ -20,3 +20,12 @@ export const createNew = async (content) => {
   }
   return await response.json(); // the backend returns the created anecdote with id
 };
+
+export const updateAnecdote = async (updatedAnecdote) => {
+  const response = await fetch(`${baseUrl}/${updatedAnecdote.id}`, { // PUT request to update an anecdote by id
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedAnecdote),
+  });
+  return await response.json();
+};
