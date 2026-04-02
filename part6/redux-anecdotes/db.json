@@ -1,0 +1,35 @@
+{
+  "anecdotes": [
+    {
+      "content": "If it hurts, do it more often",
+      "id": "1",
+      "votes": 0
+    },
+    {
+      "content": "Adding manpower to a late software project makes it later!",
+      "id": "2",
+      "votes": 0
+    },
+    {
+      "content": "this is new note ",
+      "votes": 0,
+      "id": "e-hOlOn156Y"
+    },
+    {
+      "content": "another note",
+      "votes": 0,
+      "id": "Q0XCMO4QDTg"
+    },
+    {
+      "content": "new note",
+      "votes": 0,
+      "id": "M35bS2Hev5I"
+    },
+    {
+      "content": "new note2",
+      "votes": 0,
+      "id": "Es-L2WFWIMQ"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
