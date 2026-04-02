@@ -10,9 +10,13 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAll().then((anecdotes) => {
-      dispatch(setAnecdotes(anecdotes)); // replace state with backend data
-    });
+    getAll()
+      .then((anecdotes) => {
+        dispatch(setAnecdotes(anecdotes)); // replace state with backend data
+      })
+      .catch((error) => {
+        console.error("Failed to fetch anecdotes:", error);
+      });
   }, [dispatch]);
   return (
     <div>
