@@ -1,18 +1,34 @@
 import { useDispatch } from "react-redux";
-import { createAnecdote } from "../reducers/anecdoteReducer";
 import { showNotification } from "../reducers/notificationReducer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNew } from "../services/anecdotes";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const addAnecdote = async (event) => {
+  // Set up mutation for creating a new anecdote
+  const newAnecdoteMutation = useMutation({
+    mutationFn: createNew,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["anecdotes"]); // refetch list
+    },
+  });
+
+  const addAnecdote = (event) => {
     event.preventDefault();
 
     const content = event.target.anecdote.value;
     event.target.anecdote.value = "";
 
-    // Dispatch the async thunk
-    dispatch(createAnecdote(content));
+    if (content.length < 5) {
+      alert("Anecdote must be at least 5 characters long");
+      return;
+    }
+
+    newAnecdoteMutation.mutate(content);
+
+    // notification still via Redux
     dispatch(showNotification(`New anecdote '${content}' added`, 5));
   };
 
