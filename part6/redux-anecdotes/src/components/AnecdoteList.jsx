@@ -1,40 +1,39 @@
-import { useSelector, useDispatch } from "react-redux";
-import { voteAnecdote } from "../reducers/anecdoteReducer";
-import { showNotification } from "../reducers/notificationReducer";
+import { useQuery } from "@tanstack/react-query";
+import { getAll } from "../services/anecdotes";
+import { useSelector } from "react-redux";
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state.anecdotes); // get the anecdotes from the store
-  const filter = useSelector((state) => state.filter); // get the filter value from the store
-  const dispatch = useDispatch();
+  // Get filter value from Redux
+  const filter = useSelector((state) => state.filter);
 
-  // filter anecdotes first
+  const result = useQuery({
+    queryKey: ["anecdotes"],
+    queryFn: getAll,
+    retry: false, // do not retry on error, show message immediately
+  });
+
+  // Handle loading and error states
+  if (result.isLoading) return <div>Loading anecdotes...</div>;
+  if (result.isError)
+    return <div>Anecdote service not available due to server problems</div>;
+
+  // Get anecdotes data from query result
+  const anecdotes = result.data;
+
   const filteredAnecdotes = anecdotes.filter(
-    (anecdote) =>
-      anecdote.content &&
-      typeof anecdote.content === "string" &&
-      anecdote.content.toLowerCase().includes(filter.toLowerCase()),
+    (a) => a.content && a.content.toLowerCase().includes(filter.toLowerCase()),
   );
 
-  // then sort the filtered anecdotes by votes in descending order
   const sortedAnecdotes = [...filteredAnecdotes].sort(
     (a, b) => b.votes - a.votes,
   );
-
-  // handle voting for an anecdote
-  const handleVote = (anecdote) => {
-    dispatch(voteAnecdote(anecdote));
-    dispatch(showNotification(`You voted '${anecdote.content}'`, 10));
-  };
 
   return (
     <div>
       {sortedAnecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
-          </div>
+          <div>has {anecdote.votes} votes</div>
         </div>
       ))}
     </div>
