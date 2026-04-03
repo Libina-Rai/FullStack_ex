@@ -1,8 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../services/anecdotes";
-import { useSelector } from "react-redux";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateAnecdote } from "../services/anecdotes";
+import { useDispatch, useSelector } from "react-redux";
+import { showNotification } from "../reducers/notificationReducer";
 
 const AnecdoteList = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+
+  const voteMutation = useMutation({
+    mutationFn: updateAnecdote,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["anecdotes"]); // refetch updated data
+    },
+  });
+
+  // Handle voting for an anecdote
+  const handleVote = (anecdote) => {
+    const updatedAnecdote = {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    };
+
+    voteMutation.mutate(updatedAnecdote);
+
+    dispatch(showNotification(`You voted '${anecdote.content}'`, 5));
+  };
   // Get filter value from Redux
   const filter = useSelector((state) => state.filter);
 
@@ -33,7 +57,10 @@ const AnecdoteList = () => {
       {sortedAnecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
-          <div>has {anecdote.votes} votes</div>
+          <div>
+            has {anecdote.votes} votes
+            <button onClick={() => handleVote(anecdote)}>vote</button>
+          </div>
         </div>
       ))}
     </div>
