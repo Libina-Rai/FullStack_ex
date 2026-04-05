@@ -1,10 +1,9 @@
-import { useDispatch } from "react-redux";
-import { showNotification } from "../reducers/notificationReducer";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNew } from "../services/anecdotes";
+import { useNotification } from "../useNotification";
 
 const AnecdoteForm = () => {
-  const dispatch = useDispatch();
+  const [, showNotification] = useNotification();
   const queryClient = useQueryClient();
 
   // Set up mutation for creating a new anecdote
@@ -28,8 +27,8 @@ const AnecdoteForm = () => {
     event.target.anecdote.value = "";
     newAnecdoteMutation.mutate(content);
 
-    // notification still via Redux
-    dispatch(showNotification(`New anecdote '${content}' added`, 5));
+    // Show notification for 5 seconds
+    showNotification(`New anecdote '${content}' added`, 5);
   };
 
   return (

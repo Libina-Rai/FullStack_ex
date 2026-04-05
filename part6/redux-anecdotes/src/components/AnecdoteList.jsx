@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../services/anecdotes";
+import { useSelector } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateAnecdote } from "../services/anecdotes";
-import { useDispatch, useSelector } from "react-redux";
-import { showNotification } from "../reducers/notificationReducer";
+import { useNotification } from "../useNotification";
 
 const AnecdoteList = () => {
+  const [, showNotification] = useNotification();
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
 
   const voteMutation = useMutation({
     mutationFn: updateAnecdote,
@@ -25,7 +25,7 @@ const AnecdoteList = () => {
 
     voteMutation.mutate(updatedAnecdote);
 
-    dispatch(showNotification(`You voted '${anecdote.content}'`, 5));
+    showNotification(`You voted '${anecdote.content}'`, 5);
   };
   // Get filter value from Redux
   const filter = useSelector((state) => state.filter);
