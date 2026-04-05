@@ -9,8 +9,12 @@ const AnecdoteForm = () => {
   // Set up mutation for creating a new anecdote
   const newAnecdoteMutation = useMutation({
     mutationFn: createNew,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["anecdotes"] }); // refetch list
+      showNotification(`New anecdote '${data.content}' added`, 5);
+    },
+    onError: (error) => {
+      showNotification(`Failed to add anecdote: ${error.message}`, 5);
     },
   });
 
@@ -18,17 +22,15 @@ const AnecdoteForm = () => {
     event.preventDefault();
 
     const content = event.target.anecdote.value;
-
-    if (content.length < 5) {
-      alert("Anecdote must be at least 5 characters long");
-      return;
+    // Client-side validation
+    if (!content || content.length < 5) {
+      showNotification("Anecdote must be at least 5 characters long", 5);
+      return; // stop the mutation
     }
-
     event.target.anecdote.value = "";
-    newAnecdoteMutation.mutate(content);
 
-    // Show notification for 5 seconds
-    showNotification(`New anecdote '${content}' added`, 5);
+    // trigger the mutation to create a new anecdote
+    newAnecdoteMutation.mutate(content);
   };
 
   return (
