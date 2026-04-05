@@ -12,7 +12,7 @@ const AnecdoteList = () => {
   const voteMutation = useMutation({
     mutationFn: updateAnecdote,
     onSuccess: () => {
-      queryClient.invalidateQueries(["anecdotes"]); // refetch updated data
+      queryClient.invalidateQueries({ queryKey: ["anecdotes"] }); // refetch updated data
     },
   });
 

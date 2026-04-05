@@ -11,7 +11,7 @@ const AnecdoteForm = () => {
   const newAnecdoteMutation = useMutation({
     mutationFn: createNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(["anecdotes"]); // refetch list
+      queryClient.invalidateQueries({ queryKey: ["anecdotes"] }); // refetch list
     },
   });
 
@@ -19,13 +19,13 @@ const AnecdoteForm = () => {
     event.preventDefault();
 
     const content = event.target.anecdote.value;
-    event.target.anecdote.value = "";
 
     if (content.length < 5) {
       alert("Anecdote must be at least 5 characters long");
       return;
     }
 
+    event.target.anecdote.value = "";
     newAnecdoteMutation.mutate(content);
 
     // notification still via Redux
