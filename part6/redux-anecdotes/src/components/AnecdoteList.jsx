@@ -11,8 +11,12 @@ const AnecdoteList = () => {
 
   const voteMutation = useMutation({
     mutationFn: updateAnecdote,
-    onSuccess: () => {
+    onSuccess: (_data, votedAnecdote) => {
       queryClient.invalidateQueries({ queryKey: ["anecdotes"] }); // refetch updated data
+      showNotification(`You voted '${votedAnecdote.content}'`, 5);
+    },
+    onError: (error) => {
+      showNotification(`Failed to vote: ${error.message}`, 5);
     },
   });
 
@@ -24,8 +28,6 @@ const AnecdoteList = () => {
     };
 
     voteMutation.mutate(updatedAnecdote);
-
-    showNotification(`You voted '${anecdote.content}'`, 5);
   };
   // Get filter value from Redux
   const filter = useSelector((state) => state.filter);

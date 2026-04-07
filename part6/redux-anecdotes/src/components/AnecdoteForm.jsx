@@ -21,9 +21,9 @@ const AnecdoteForm = () => {
   const addAnecdote = (event) => {
     event.preventDefault();
 
-    const content = event.target.anecdote.value;
+    const content = event.target.anecdote.value.trim();
     // Client-side validation
-    if (!content || content.length < 5) {
+    if (content.length < 5) {
       showNotification("Anecdote must be at least 5 characters long", 5);
       return; // stop the mutation
     }
