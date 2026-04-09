@@ -12,9 +12,7 @@ export const useField = (type = "text") => {
   };
 
   return {
-    type,
-    value,
-    onChange,
+    inputProps: { type, value, onChange },
     reset,
   };
 };
