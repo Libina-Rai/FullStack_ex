@@ -10,9 +10,16 @@ export const useAnecdotes = () => {
     });
   }, []);
 
-  return anecdotes;
+  // Add a new anecdote to the server and update the local state
+  const addAnecdote = async (anecdote) => {
+    const created = await anecdoteService.createNew(anecdote);
+    setAnecdotes(anecdotes.concat(created));
+  };
+
+  return { anecdotes, addAnecdote };
 };
 
+// Custom hook for managing form fields
 export const useField = (type = "text") => {
   const [value, setValue] = useState("");
 
