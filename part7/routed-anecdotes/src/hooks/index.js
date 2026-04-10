@@ -3,20 +3,28 @@ import anecdoteService from "../services/anecdotes";
 
 export const useAnecdotes = () => {
   const [anecdotes, setAnecdotes] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    anecdoteService.getAll().then((data) => {
-      setAnecdotes(data);
-    });
+    anecdoteService
+      .getAll()
+      .then((data) => setAnecdotes(data))
+      .catch((err) => setError(err));
   }, []);
 
   // Add a new anecdote to the server and update the local state
   const addAnecdote = async (anecdote) => {
-    const created = await anecdoteService.createNew(anecdote);
-    setAnecdotes(anecdotes.concat(created));
+    try {
+      const createdAnecdote = await anecdoteService.createNew(anecdote);
+      setAnecdotes((prevAnecdotes) => prevAnecdotes.concat(createdAnecdote));
+      return createdAnecdote;
+    } catch (err) {
+      setError(err);
+      throw err; // Re-throw the error so that the calling component can handle it as well
+    }
   };
 
-  return { anecdotes, addAnecdote };
+  return { anecdotes, addAnecdote, error };
 };
 
 // Custom hook for managing form fields
