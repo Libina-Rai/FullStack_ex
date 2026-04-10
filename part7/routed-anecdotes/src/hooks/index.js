@@ -24,7 +24,12 @@ export const useAnecdotes = () => {
     }
   };
 
-  return { anecdotes, addAnecdote, error };
+  const deleteAnecdote = async (id) => {
+    await anecdoteService.remove(id);
+    setAnecdotes(anecdotes.filter((anecdote) => anecdote.id !== id));
+  }
+
+  return { anecdotes, addAnecdote, error, deleteAnecdote };
 };
 
 // Custom hook for managing form fields
