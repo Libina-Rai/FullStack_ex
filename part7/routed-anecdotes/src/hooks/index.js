@@ -25,9 +25,16 @@ export const useAnecdotes = () => {
   };
 
   const deleteAnecdote = async (id) => {
-    await anecdoteService.remove(id);
-    setAnecdotes(anecdotes.filter((anecdote) => anecdote.id !== id));
-  }
+    try {
+      await anecdoteService.remove(id);
+      setAnecdotes((prevAnecdotes) =>
+        prevAnecdotes.filter((anecdote) => anecdote.id !== id),
+      );
+    } catch (err) {
+      setError(err);
+      throw err; // Re-throw the error so that the calling component can handle it as well
+    }
+  };
 
   return { anecdotes, addAnecdote, error, deleteAnecdote };
 };
