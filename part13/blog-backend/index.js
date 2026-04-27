@@ -5,6 +5,7 @@ const pool = require("./db");
 
 app.use(express.json());
 
+// Get all blog posts
 app.get("/api/blogs", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM blogs");
@@ -15,6 +16,7 @@ app.get("/api/blogs", async (req, res) => {
   }
 });
 
+// Test database connection
 app.get("/api/test-db", async (req, res) => {
   console.log(req.body);
   const result = await pool.query("SELECT NOW()");
