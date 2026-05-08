@@ -1,13 +1,18 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const pool = require("./db");
-require("dotenv").config();
 
 app.use(express.json());
 
 app.get("/api/blogs", async (req, res) => {
-  const result = await pool.query("SELECT * FROM blogs");
-  res.json(result.rows);
+  try {
+    const result = await pool.query("SELECT * FROM blogs");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("GET /api/blogs failed", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.get("/api/test-db", async (req, res) => {
@@ -16,6 +21,7 @@ app.get("/api/test-db", async (req, res) => {
   res.json(result.rows[0]);
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
