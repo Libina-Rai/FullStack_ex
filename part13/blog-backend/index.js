@@ -5,6 +5,7 @@ const pool = require("./db");
 
 app.use(express.json());
 
+// Get all blog posts
 app.get("/api/blogs", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM blogs");
@@ -15,8 +16,27 @@ app.get("/api/blogs", async (req, res) => {
   }
 });
 
+app.post("/api/blogs", async (req, res) => {
+  const { title, author, url } = req.body;
+
+  const result = await pool.query(
+    "INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *",
+    [title, author, url],
+  );
+
+  res.status(201).json(result.rows[0]);
+});
+
+app.delete("/api/blogs/:id", async (req, res) => {
+  const id = req.params.id;
+
+  await pool.query("DELETE FROM blogs WHERE id = $1", [id]);
+
+  res.status(204).end();
+});
+
+// Test database connection
 app.get("/api/test-db", async (req, res) => {
-  console.log(req.body);
   const result = await pool.query("SELECT NOW()");
   res.json(result.rows[0]);
 });

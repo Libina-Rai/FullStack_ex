@@ -1,0 +1,15 @@
+### Get all blog posts
+GET http://localhost:3001/api/blogs
+
+### Create a new blog post
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "My new blog post",
+  "author": "John Dohn",
+  "url": "http://example.com/my-new-blog-post"
+}
+
+### DELETE a blog (change id as needed)
+DELETE http://localhost:3001/api/blogs/7
