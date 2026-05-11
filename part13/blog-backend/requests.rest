@@ -21,3 +21,12 @@ Content-Type: application/json
 {
   "likes": 5
 }
+
+### Create a new user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "name": "sona",
+  "username": "hello"
+}
