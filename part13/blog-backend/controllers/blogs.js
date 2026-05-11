@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const pool = require("../util/db");
+const { pool } = require("../util/db");
 
 // Get all blogs
 router.get("/", async (req, res, next) => {
