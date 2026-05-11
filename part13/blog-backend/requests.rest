@@ -13,3 +13,11 @@ Content-Type: application/json
 
 ### DELETE a blog (change id as needed)
 DELETE http://localhost:3001/api/blogs/7
+
+### Update a blog (change id as needed)
+PUT http://localhost:3001/api/blogs/8
+Content-Type: application/json
+
+{
+  "likes": 5
+}
