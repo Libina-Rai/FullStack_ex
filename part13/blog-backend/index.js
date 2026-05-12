@@ -13,7 +13,8 @@ const usersRouter = require("./controllers/users");
 const loginsRouter = require("./controllers/logins");
 
 // initialize model
-require("./models/user");
+const User = require("./models/user");
+User.sync();
 
 app.use(express.json());
 

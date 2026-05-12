@@ -17,7 +17,13 @@ router.post("/", async (req, res, next) => {
   try {
     const user = await User.create(req.body);
 
-    res.status(201).json(user);
+    res.status(201).json({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
   } catch (err) {
     next(err);
   }
@@ -42,7 +48,13 @@ router.put("/:username", async (req, res, next) => {
 
     await user.save();
 
-    res.json(user);
+    res.json({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
   } catch (err) {
     next(err);
   }

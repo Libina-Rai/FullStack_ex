@@ -17,7 +17,7 @@ const errorHandler = (err, req, res, next) => {
 
   // default error response
   res.status(500).json({
-    error: "Something went wrong",
+    error: err.message,
   });
 };
 
