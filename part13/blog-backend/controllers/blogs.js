@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { pool } = require("../util/db");
+const { userExtractor } = require("../util/middleware");
 
 // Get all blogs
 router.get("/", async (req, res, next) => {
@@ -12,7 +13,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // Create blog
-router.post("/", async (req, res, next) => {
+router.post("/", userExtractor, async (req, res, next) => {
   const { title, author, url } = req.body;
 
   const result = await pool.query(
