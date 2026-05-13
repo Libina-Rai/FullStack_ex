@@ -5,8 +5,38 @@ const { userExtractor } = require("../util/middleware");
 // Get all blogs
 router.get("/", async (req, res, next) => {
   try {
-    const result = await pool.query("SELECT * FROM blogs");
-    res.json(result.rows);
+    const result = await pool.query(`
+      SELECT
+        blogs.id,
+        blogs.title,
+        blogs.author,
+        blogs.url,
+        blogs.likes,
+        blogs.user_id,
+        users.id AS u_id,
+        users.name,
+        users.username
+      FROM blogs
+      LEFT JOIN users
+      ON blogs.user_id = users.id
+    `);
+
+    const blogs = result.rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      author: row.author,
+      url: row.url,
+      likes: row.likes,
+      user: row.user_id
+        ? {
+            id: row.u_id,
+            name: row.name,
+            username: row.username,
+          }
+        : null,
+    }));
+
+    res.json(blogs);
   } catch (err) {
     next(err);
   }
@@ -70,5 +100,7 @@ router.put("/:id", userExtractor, async (req, res, next) => {
     next(error);
   }
 });
+
+console.log("DATABASE:", process.env.DATABASE_URL);
 
 module.exports = router;

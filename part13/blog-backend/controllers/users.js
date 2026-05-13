@@ -1,12 +1,29 @@
 const router = require("express").Router();
-
+const { pool } = require("../util/db");
 const User = require("../models/user");
 
 // GET all users
 router.get("/", async (req, res, next) => {
   try {
-    const users = await User.findAll();
-    res.json(users);
+    const usersResult = await User.findAll();
+
+    const usersWithBlogs = await Promise.all(
+      usersResult.map(async (user) => {
+        const blogsResult = await pool.query(
+          "SELECT id, title, author, url, likes FROM blogs WHERE user_id = $1",
+          [user.id],
+        );
+
+        return {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          blogs: blogsResult.rows,
+        };
+      }),
+    );
+
+    res.json(usersWithBlogs);
   } catch (err) {
     next(err);
   }

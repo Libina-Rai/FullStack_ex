@@ -5,6 +5,8 @@ GET http://localhost:3001/api/blogs
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
 Authorization: Bearer <token>
+
+{
   "title": "My new blog post",
   "author": "John Dohn",
   "url": "http://example.com/my-new-blog-post"
@@ -17,6 +19,7 @@ Authorization: Bearer <token>
 PUT http://localhost:3001/api/blogs/8
 Content-Type: application/json
 Authorization: Bearer <token>
+
 {
   "likes": 5
 }
