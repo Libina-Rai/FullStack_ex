@@ -4,6 +4,7 @@ GET http://localhost:3001/api/blogs
 ### Create a new blog post
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "title": "My new blog post",
@@ -13,11 +14,34 @@ Content-Type: application/json
 
 ### DELETE a blog (change id as needed)
 DELETE http://localhost:3001/api/blogs/7
-
+Authorization: Bearer <token>
 ### Update a blog (change id as needed)
 PUT http://localhost:3001/api/blogs/8
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "likes": 5
 }
+
+### Create a new user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "name": "another",
+  "username": "ano_user@gmail.com",
+  "password": "123456"
+}
+
+### Login
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+  "username": "ano_user@gmail.com",
+  "password": "123456"
+}
+
+###
+GET http://localhost:3001/api/users
